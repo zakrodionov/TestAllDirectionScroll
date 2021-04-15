@@ -1,0 +1,3 @@
+package com.example.testalldirectionscroll.common
+
+interface DisplayableItem
