@@ -107,9 +107,9 @@ class MainActivity : AppCompatActivity() {
                 feedsAdapter.items = itemsSnapshot.map {
                     if (it == item) {
                         if (direction == START) {
-                            it.copy(items = generateInnerItems(item.itemId) + it.items)
+                            it.copy(items = generateInnerItems(item.title) + it.items)
                         } else {
-                            it.copy(items = it.items + generateInnerItems(item.itemId))
+                            it.copy(items = it.items + generateInnerItems(item.title))
                         }
                     } else {
                         it

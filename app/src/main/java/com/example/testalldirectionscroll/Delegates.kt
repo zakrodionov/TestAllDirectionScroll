@@ -96,6 +96,6 @@ fun innerFeedDelegate(onItemClick: (InnerFeedItem) -> Unit = {}) =
         }
 
         bind {
-            binding.tvFeed.text = item.itemId
+            binding.tvFeed.text = item.title
         }
     }
