@@ -2,7 +2,7 @@ package com.example.testalldirectionscroll
 
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSnapHelper
+import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.testalldirectionscroll.AdditionItemsDirection.END
 import com.example.testalldirectionscroll.AdditionItemsDirection.START
@@ -47,7 +47,7 @@ fun feedDelegate(
         layoutManager = linearLayoutManager
     }
 
-    val snapHelper = LinearSnapHelper()
+    val snapHelper = PagerSnapHelper()
     snapHelper.attachToRecyclerView(binding.rvInner)
 
     bind {

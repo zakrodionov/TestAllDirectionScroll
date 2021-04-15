@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
+import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.testalldirectionscroll.AdditionItemsDirection.END
@@ -41,7 +42,7 @@ class MainActivity : AppCompatActivity() {
             itemAnimator = null
             adapter = feedsAdapter
             layoutManager = linearLayoutManager
-            val snapHelper = LinearSnapHelper()
+            val snapHelper = PagerSnapHelper()
             snapHelper.attachToRecyclerView(this)
         }
 
