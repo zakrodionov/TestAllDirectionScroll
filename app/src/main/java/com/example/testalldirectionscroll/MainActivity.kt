@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -38,11 +37,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val snapHelper = PagerSnapHelper()
         binding.rvMain.apply {
             itemAnimator = null
             adapter = feedsAdapter
             layoutManager = linearLayoutManager
-            val snapHelper = PagerSnapHelper()
             snapHelper.attachToRecyclerView(this)
         }
 
@@ -66,6 +65,16 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             })
+
+            post {
+                snapHelper.findSnapView(linearLayoutManager)?.let {
+                    val snapDistance =
+                        snapHelper.calculateDistanceToFinalSnap(linearLayoutManager, it)
+                    if (snapDistance!![0] != 0 || snapDistance[1] != 0) {
+                        scrollBy(snapDistance[0], snapDistance[1])
+                    }
+                }
+            }
         }
     }
 

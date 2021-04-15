@@ -75,16 +75,8 @@ fun feedDelegate(
         }
 
         binding.rvInner.addOnScrollListener(scrollListener)
-    }
 
-    /**
-     * If we fast scroll while this ViewHolder's RecyclerView is still settling the scroll,
-     * the view will be detached and won't be snapped correctly
-     *
-     * To fix that, we snap again without smooth scrolling.
-     */
-    onViewDetachedFromWindow {
-        if (binding.rvInner.scrollState != RecyclerView.SCROLL_STATE_IDLE) {
+        binding.rvInner.post {
             snapHelper.findSnapView(linearLayoutManager)?.let {
                 val snapDistance = snapHelper.calculateDistanceToFinalSnap(linearLayoutManager, it)
                 if (snapDistance!![0] != 0 || snapDistance[1] != 0) {
