@@ -13,9 +13,11 @@ import com.example.testalldirectionscroll.databinding.ItemInnerFeedBinding
 import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
 
+// Todo перенести во fragment/activity/adapter
 val savedAdapters = mutableMapOf<String, AsyncListDifferDelegationAdapter<DiffItem>>()
 val savedScrollX = mutableMapOf<String, Int>()
 val savedListStateInitialized = mutableMapOf<String, Boolean>()
+val viewPool = RecyclerView.RecycledViewPool()
 
 fun feedDelegate(
     onItemClick: (FeedItem) -> Unit = {},
@@ -26,6 +28,8 @@ fun feedDelegate(
     binding.root.setOnClickListener {
         onItemClick.invoke(item)
     }
+
+    binding.rvInner.setRecycledViewPool(viewPool)
 
     val linearLayoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
     val scrollListener = object : RecyclerView.OnScrollListener() {
