@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        binding.vpMain.apply {
+        binding.rvMain.apply {
             itemAnimator = null
             adapter = feedsAdapter
             layoutManager = linearLayoutManager
@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         val items = generateItems()
         feedsAdapter.items = items
 
-        binding.vpMain.apply {
+        binding.rvMain.apply {
             scrollToPosition(items.size / 2) // TODO
 
             addOnScrollListener(object : RecyclerView.OnScrollListener() {

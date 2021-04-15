@@ -30,8 +30,8 @@ fun feedDelegate(
     val linearLayoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
     val scrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-            Log.d("wwwww: ", "Call inner scrollListener $adapterPosition")
-            savedScrollX[item.itemId] = binding.vpInner.computeHorizontalScrollOffset()
+            Log.d("wwwwwn:", "Call inner scrollListener $adapterPosition")
+            savedScrollX[item.itemId] = binding.rvInner.computeHorizontalScrollOffset()
 
             if (linearLayoutManager.findLastVisibleItemPosition() + THRESHOLD > item.items.count()) {
                 addInnerPost(item, END)
@@ -42,35 +42,55 @@ fun feedDelegate(
         }
     }
 
-    binding.vpInner.apply {
+    binding.rvInner.apply {
         itemAnimator = null
         layoutManager = linearLayoutManager
-        addOnScrollListener(scrollListener)
     }
 
     val snapHelper = LinearSnapHelper()
-    snapHelper.attachToRecyclerView(binding.vpInner)
+    snapHelper.attachToRecyclerView(binding.rvInner)
 
     bind {
+        binding.rvInner.removeOnScrollListener(scrollListener)
+
         val feedsAdapter =
             savedAdapters.getOrPut(item.itemId, { CustomStableIdAdapter(innerFeedDelegate()) })
 
-        binding.vpInner.apply {
+        binding.rvInner.apply {
             adapter = feedsAdapter
             feedsAdapter.items = item.items
         }
 
         val state = savedScrollX[item.itemId]
         state?.let {
-            if (binding.vpInner.computeHorizontalScrollOffset() != it) {
-                binding.vpInner.scrollBy(it, 0)
+            if (binding.rvInner.computeHorizontalScrollOffset() != it) {
+                binding.rvInner.scrollBy(it, 0)
             }
         }
 
         val isInitialized = savedListStateInitialized.getOrPut(item.itemId, { false })
         if (!isInitialized) {
-            binding.vpInner.scrollToPosition(item.items.size / 2)
+            binding.rvInner.scrollToPosition(item.items.size / 2)
             savedListStateInitialized[item.itemId] = true
+        }
+
+        binding.rvInner.addOnScrollListener(scrollListener)
+    }
+
+    /**
+     * If we fast scroll while this ViewHolder's RecyclerView is still settling the scroll,
+     * the view will be detached and won't be snapped correctly
+     *
+     * To fix that, we snap again without smooth scrolling.
+     */
+    onViewDetachedFromWindow {
+        if (binding.rvInner.scrollState != RecyclerView.SCROLL_STATE_IDLE) {
+            snapHelper.findSnapView(linearLayoutManager)?.let {
+                val snapDistance = snapHelper.calculateDistanceToFinalSnap(linearLayoutManager, it)
+                if (snapDistance!![0] != 0 || snapDistance[1] != 0) {
+                    binding.rvInner.scrollBy(snapDistance[0], snapDistance[1])
+                }
+            }
         }
     }
 }
