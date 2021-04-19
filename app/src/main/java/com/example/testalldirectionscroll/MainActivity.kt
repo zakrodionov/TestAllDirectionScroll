@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
-import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.testalldirectionscroll.AdditionItemsDirection.END
 import com.example.testalldirectionscroll.AdditionItemsDirection.START
@@ -54,17 +53,21 @@ class MainActivity : AppCompatActivity() {
         binding.rvMain.apply {
             scrollToPosition(items.size / 2) // TODO
 
-            addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if (linearLayoutManager.findFirstVisibleItemPosition() < THRESHOLD) {
-                        addPost(START)
-                    }
-
-                    if (linearLayoutManager.findLastVisibleItemPosition() + THRESHOLD > linearLayoutManager.itemCount) {
-                        addPost(END)
-                    }
+            addOnScrollListener(EndlessSnapScrollListener(snapHelper, object : OnSnapPositionChangeListener {
+                override fun onSnapPositionChange(position: Int) {
+                    Log.d("wwwwwn: pos-main", "${items.getOrNull(position)?.itemId}")
                 }
-            })
+
+                override fun onHorizontalScrollOffsetChange(offset: Int) = Unit
+
+                override fun loadToStart() {
+                    addPost(START)
+                }
+
+                override fun loadToEnd() {
+                    addPost(END)
+                }
+            }))
 
             post {
                 snapHelper.findSnapView(linearLayoutManager)?.let {

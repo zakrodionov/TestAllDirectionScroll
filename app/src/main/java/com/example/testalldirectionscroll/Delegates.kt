@@ -31,28 +31,33 @@ fun feedDelegate(
 
     binding.rvInner.setRecycledViewPool(viewPool)
 
-    val linearLayoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
-    val scrollListener = object : RecyclerView.OnScrollListener() {
-        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-            Log.d("wwwwwn:", "Call inner scrollListener $adapterPosition")
-            savedScrollX[item.itemId] = binding.rvInner.computeHorizontalScrollOffset()
+    val snapHelper = PagerSnapHelper()
+    snapHelper.attachToRecyclerView(binding.rvInner)
 
-            if (linearLayoutManager.findLastVisibleItemPosition() + THRESHOLD > item.items.count()) {
-                addInnerPost(item, END)
-            }
-            if (linearLayoutManager.findFirstVisibleItemPosition() < THRESHOLD) {
-                addInnerPost(item, START)
-            }
+    val linearLayoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+    val scrollListener = EndlessSnapScrollListener(snapHelper, object : OnSnapPositionChangeListener {
+        override fun onSnapPositionChange(position: Int) {
+            Log.d("wwwwwn: pos-del", "${item.items.getOrNull(position)?.itemId}")
         }
-    }
+
+        override fun onHorizontalScrollOffsetChange(offset: Int) {
+            Log.d("wwwwwn:", "Call inner scrollListener $adapterPosition")
+            savedScrollX[item.itemId] = offset
+        }
+
+        override fun loadToStart() {
+            addInnerPost(item, START)
+        }
+
+        override fun loadToEnd() {
+            addInnerPost(item, END)
+        }
+    })
 
     binding.rvInner.apply {
         itemAnimator = null
         layoutManager = linearLayoutManager
     }
-
-    val snapHelper = PagerSnapHelper()
-    snapHelper.attachToRecyclerView(binding.rvInner)
 
     bind {
         binding.rvInner.removeOnScrollListener(scrollListener)
